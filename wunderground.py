@@ -1,13 +1,10 @@
-import os
 import requests
-from pprint import pprint
+import settings
 
-API_KEY = os.environ.get("WUNDERGROUND_KEY")
+class Wunderground(object):
 
-current_conditions = "http://api.wunderground.com/api/{}/conditions/q/pws:KMIHOLLA1.json".format(API_KEY)
-
-daily_history = "http://api.wunderground.com/api/{}/history_20130304/q/pws:KMIHOLLA1.json".format(API_KEY)
-
-res = requests.get(current_conditions)
-
-pprint(res.json())
+    def __init__(self, api_key, station_id):
+        current_conditions = "http://api.wunderground.com/api/{}/conditions/q/pws:{}.json".format(api_key, station_id)
+        daily_history = "http://api.wunderground.com/api/{}/history_20130304/q/pws:{}.json".format(api_key, station_id)
+        res = requests.get(current_conditions)
+        self.data = res.json()

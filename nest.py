@@ -77,7 +77,10 @@ class Nest(object):
         temp = self.status["shared"][self.serial]["current_temperature"]
         temp = self.temp_out(temp)
 
-        print "%0.1f" % temp
+        return float(temp)
+
+    def show_curhumidity(self):
+        return float(self.status["device"][self.serial]["current_humidity"])
 
     def set_temperature(self, temp):
         temp = self.temp_in(temp)
@@ -104,40 +107,3 @@ class Nest(object):
             }
         )
         return res.text
-
-un = os.environ.get("NEST_USERNAME")
-pw = os.environ.get("NEST_PASSWORD")
-
-n = Nest(un, pw)
-n.login()
-n.get_status()
-n.show_status()
-n.show_curtemp()
-"""
-cmd = args[0]
-
-if (cmd == "temp"):
-    if len(args)<2:
-        print "please specify a temperature"
-        sys.exit(-1)
-    n.set_temperature(int(args[1]))
-elif (cmd == "fan"):
-    if len(args)<2:
-        print "please specify a fan state of 'on' or 'auto'"
-        sys.exit(-1)
-    n.set_fan(args[1])
-elif (cmd == "show"):
-    n.show_status()
-elif (cmd == "curtemp"):
-    n.show_curtemp()
-elif (cmd == "curhumid"):
-    print n.status["device"][n.serial]["current_humidity"]
-else:
-    print "misunderstood command:", cmd
-    print "do 'nest.py help' for help"
-"""
-
-
-
-
-

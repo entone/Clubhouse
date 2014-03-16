@@ -45,23 +45,5 @@ class HamiltonEnergy(object):
         f = re.search(self.last_price_pattern, data)
         return {'units':int(m.group(1)), 'date':d, 'ppu':float(f.group(1))}
 
-        
-
-unit = "Gallon(s)"
-
-un = os.environ.get('ENERGY_USERNAME')
-pw = os.environ.get('ENERGY_PASSWORD')
-
-he = HamiltonEnergy(username=un, password=pw)
-print "Current Level:"
-print "{}% of 500 {}".format(he.tank_level(), unit)
-print "Last Filled On:"
-lf =  he.last_fill()
-print lf.get('date')
-print "Last Fill Amount:"
-print "{} {}".format(lf.get('units'), unit)
-print "Last Price per {}:".format(unit)
-print "${}".format(lf.get('ppu'))
-
 
 

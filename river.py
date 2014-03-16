@@ -33,8 +33,3 @@ class USGSWaterServices(object):
                     pos = vi.get("dateTime").rfind(':')
                     ts = vi.get("dateTime").split(".")[0]
                     print "Timestamp: {}".format(datetime.datetime.strptime(ts, self.date_format))
-
-
-
-kzoo_river = USGSWaterServices()
-kzoo_river.preview()
