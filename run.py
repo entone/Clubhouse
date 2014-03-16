@@ -37,6 +37,7 @@ while True:
     print n.show_curhumidity()
     #River
     kzoo_river = USGSWaterServices(site=settings.USGS_SITE)
+    pprint(kzoo_river.get_data())
     kzoo_river.preview()
     #Wunderground
     wg = Wunderground(settings.WUNDERGROUND_API_KEY, settings.WUNDERGROUND_STATION_ID)
