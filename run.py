@@ -69,6 +69,7 @@ while True:
     #River
     try:
         kzoo_river = USGSWaterServices(site=settings.USGS_SITE)
+        pprint(kzoo_river.content)
         for k,v in kzoo_river.values().iteritems():
             logging.info("{}: {}".format(k, v))
             t = TimeSeriesMetric(k, v.get('value'), v.get('timestamp')).save()
