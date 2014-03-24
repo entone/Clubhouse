@@ -6,7 +6,10 @@ from wunderground import Wunderground
 import datetime
 from pprint import pprint
 import settings
+import logging
 import gevent
+
+logging.basicConfig(level=logging.DEBUG)
 
 es = Elasticsearch()
 
@@ -32,46 +35,53 @@ class TimeSeriesMetric(object):
 
 while True:
     #Energy
-    unit = "Gallon(s)"
-    un = settings.HAMILTON_ENERGY_UN
-    pw = settings.HAMILTON_ENERGY_PW
-    he = HamiltonEnergy(username=un, password=pw)
-    print "Current Level:"
-    print "{}% of 500 {}".format(he.tank_level(), unit)
-    gl = TimeSeriesMetric('propane-level', he.tank_level()).save()
-    print "Last Filled On:"
-    lf =  he.last_fill()
-    print lf.get('date')
-    fill = TimeSeriesMetric('propane-fill', lf.get('units'), lf.get('date')).save()
-    print "Last Fill Amount:"
-    print "{} {}".format(lf.get('units'), unit)
-    print "Last Price per {}:".format(unit)
-    ppu = TimeSeriesMetric('propane-ppu', lf.get('ppu'), lf.get('date')).save()
-    print "${}".format(lf.get('ppu'))
-    lp = he.last_payment()
-    print "Last Payment: ${} on {}".format(lp['amount'], lp['date'])
-    lsp = TimeSeriesMetric('propane-last-payment', lp['amount'], lp['date']).save()
+    try:
+        unit = "Gallon(s)"
+        un = settings.HAMILTON_ENERGY_UN
+        pw = settings.HAMILTON_ENERGY_PW
+        he = HamiltonEnergy(username=un, password=pw)
+        logging.info("Current Level: {}% of 500 {}".format(he.tank_level(), unit))
+        gl = TimeSeriesMetric('propane-level', he.tank_level()).save()        
+        lf =  he.last_fill()
+        logging.info("Last Filled On: {}".format(lf.get('date')))        
+        logging.info("Last Fill Amount: {} {}".format(lf.get('units'), unit))
+        logging.info("Last Price per {}: {}".format(unit, lf.get('ppu')))
+        fill = TimeSeriesMetric('propane-fill', lf.get('units'), lf.get('date')).save()
+        ppu = TimeSeriesMetric('propane-ppu', lf.get('ppu'), lf.get('date')).save()
+        lp = he.last_payment()
+        logging.info("Last Payment: ${} on {}".format(lp['amount'], lp['date']))
+        lsp = TimeSeriesMetric('propane-last-payment', lp['amount'], lp['date']).save()
+    except Exception as e:
+        logging.exception(e)
     #Nest
-    un = settings.NEST_USERNAME
-    pw = settings.NEST_PASSWORD
-    n = Nest(un, pw)
-    n.login()
-    n.get_status()
-    n.show_status()
-    print "Current Temperature:"
-    print n.show_curtemp()
-    it = TimeSeriesMetric('indoor-temperature', n.show_curtemp()).save()
-    print "Current Humidity:"
-    print n.show_curhumidity()
-    ih = TimeSeriesMetric('indoor-humidity', n.show_curhumidity()).save()
+    try:
+        un = settings.NEST_USERNAME
+        pw = settings.NEST_PASSWORD
+        n = Nest(un, pw)
+        n.login()
+        n.get_status()
+        logging.info("Current Temperature: {}".format(n.show_curtemp()))
+        it = TimeSeriesMetric('indoor-temperature', n.show_curtemp()).save()
+        logging.info("Current Humidity: {}".format(n.show_curhumidity()))
+        ih = TimeSeriesMetric('indoor-humidity', n.show_curhumidity()).save()
+    except Exception as e:
+        logging.exception(e)
     #River
-    kzoo_river = USGSWaterServices(site=settings.USGS_SITE)
-    for k,v in kzoo_river.values().iteritems():
-        print "{}: {}".format(k, v)
-        t = TimeSeriesMetric(k, v.get('value'), v.get('timestamp')).save()
+    try:
+        kzoo_river = USGSWaterServices(site=settings.USGS_SITE)
+        for k,v in kzoo_river.values().iteritems():
+            logging.info("{}: {}".format(k, v))
+            t = TimeSeriesMetric(k, v.get('value'), v.get('timestamp')).save()
+    except Exception as e:
+        logging.exception(e)
     #Wunderground
-    wg = Wunderground(settings.WUNDERGROUND_API_KEY, settings.WUNDERGROUND_STATION_ID)
-    for k,v in wg.values().iteritems():
-        print "{}: {}".format(k,v)
-        t = TimeSeriesMetric(k, v).save()
-    gevent.sleep(20)
+    try:
+        wg = Wunderground(settings.WUNDERGROUND_API_KEY, settings.WUNDERGROUND_STATION_ID)
+        for k,v in wg.values().iteritems():
+            logging.info("{}: {}".format(k,v))
+            t = TimeSeriesMetric(k, v).save()
+    except Exception as e:
+        logging.exception(e)
+    
+
+    gevent.sleep(10*60)#update data every 10 minutes
