@@ -6,6 +6,7 @@ from wunderground import Wunderground
 import datetime
 from pprint import pprint
 import settings
+import md5
 import logging
 import gevent
 
@@ -28,7 +29,9 @@ class TimeSeriesMetric(object):
             value=self.value,
             timestamp=self.timestamp or datetime.datetime.utcnow()
         )
-        res = es.index(index=settings.ES_INDEX, doc_type=self._type, body=doc)
+        id = md5.new("{}{}{}".format(self._type, self.value, str(doc['timestamp']))).hexdigest()
+        print id
+        res = es.index(index=settings.ES_INDEX, doc_type=self._type, id=id, body=doc)
         print res
 
 
