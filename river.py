@@ -29,7 +29,8 @@ class USGSWaterServices(object):
         return self.content
 
     def convert_date(self, naive):
-        local_dt = self.local_timezone.localize(naive, is_dst=None)
+        local_dt = self.local_timezone.localize(naive)
+        print local_dt
         return local_dt.astimezone(pytz.utc)
 
 
