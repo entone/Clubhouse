@@ -1,6 +1,9 @@
 import requests
 import datetime
 
+def slugify(value):
+    return "river-{}".format(value.split(",")[0].lower().replace(" ", "-"))
+
 class USGSWaterServices(object):
     
     site = "04108660"
@@ -33,3 +36,21 @@ class USGSWaterServices(object):
                     pos = vi.get("dateTime").rfind(':')
                     ts = vi.get("dateTime").split(".")[0]
                     print "Timestamp: {}".format(datetime.datetime.strptime(ts, self.date_format))
+
+    def values(self):
+        values = {}
+        data = self.get_data()
+        for v in data.get("value", {}).get("timeSeries"):
+            print "Description:"
+            print v.get("variable", {}).get("variableDescription")
+            abbrv = v.get("variable", {}).get("unit", {}).get("unitAbbreviation")
+            for i in v.get("values"):
+                for vi in i.get("value"):                    
+                    print "{}{}".format(vi.get("value"), abbrv)
+                    pos = vi.get("dateTime").rfind(':')
+                    ts = vi.get("dateTime").split(".")[0]
+                    print "Timestamp: {}".format(datetime.datetime.strptime(ts, self.date_format))
+                    values[slugify(v.get("variable", {}).get("variableDescription"))] = {'value':float(vi.get("value")), 'timestamp':datetime.datetime.strptime(ts, self.date_format)}
+
+
+        return values

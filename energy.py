@@ -34,7 +34,7 @@ class HamiltonEnergy(object):
     def tank_level(self, refresh=False):
         data = self.get_data(refresh)
         m = re.search(self.level_pattern, data)
-        self.level = int(m.group(1))
+        self.level = float(m.group(1))
         return self.level
 
     def last_fill(self, refresh=False):
@@ -43,7 +43,7 @@ class HamiltonEnergy(object):
         d = m.group(2)
         d = datetime.datetime.strptime(d.strip(), "%A, %B %d, %Y")
         f = re.search(self.last_price_pattern, data)
-        return {'units':int(m.group(1)), 'date':d, 'ppu':float(f.group(1))}
+        return {'units':float(m.group(1)), 'date':d, 'ppu':float(f.group(1))}
 
 
 
