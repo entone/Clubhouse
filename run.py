@@ -48,6 +48,9 @@ while True:
     print "Last Price per {}:".format(unit)
     ppu = TimeSeriesMetric('propane-ppu', lf.get('ppu'), lf.get('date')).save()
     print "${}".format(lf.get('ppu'))
+    lp = he.last_payment()
+    print "Last Payment: ${} on {}".format(lp['amount'], lp['date'])
+    lsp = TimeSeriesMetric('propane-last-payment', lp['amount'], lp['date']).save()
     #Nest
     un = settings.NEST_USERNAME
     pw = settings.NEST_PASSWORD

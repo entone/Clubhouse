@@ -14,6 +14,10 @@ class HamiltonEnergy(object):
     level_pattern = "drawChart\((\d+)\)"
     last_gallons_pattern = "Last delivery\: (\d+) gallons on (.+)"
     last_price_pattern = "Current Price\: \$(\d+\.\d+)"
+    last_payment_amount_pattern = "Last Payment Amount:</div><div class=\"de\">\$(\d+\.\d+)</div>"
+    last_payment_date_pattern = "Last Payment Date:</div><div class=\"de\">(\d+/\d+/\d+)</div>"
+
+
     content = None
 
     def __init__(self, username, password):
@@ -36,6 +40,14 @@ class HamiltonEnergy(object):
         m = re.search(self.level_pattern, data)
         self.level = float(m.group(1))
         return self.level
+
+    def last_payment(self, refresh=False):
+        data = self.get_data(refresh)
+        m = re.search(self.last_payment_date_pattern, data)
+        d = m.group(1)
+        d = datetime.datetime.strptime(d.strip(), "%m/%d/%Y")
+        f = re.search(self.last_payment_amount_pattern, data)
+        return {'amount':float(f.group(1)), 'date':d}
 
     def last_fill(self, refresh=False):
         data = self.get_data(refresh)
