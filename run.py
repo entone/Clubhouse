@@ -9,6 +9,7 @@ import settings
 import md5
 import logging
 import gevent
+import schedule
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -36,7 +37,7 @@ class TimeSeriesMetric(object):
 
 
 
-while True:
+def energy():
     #Energy
     try:
         unit = "Gallon(s)"
@@ -56,6 +57,8 @@ while True:
         lsp = TimeSeriesMetric('propane-last-payment', lp['amount'], lp['date']).save()
     except Exception as e:
         logging.exception(e)
+
+def nest():
     #Nest
     try:
         un = settings.NEST_USERNAME
@@ -69,6 +72,8 @@ while True:
         ih = TimeSeriesMetric('indoor-humidity', n.show_curhumidity()).save()
     except Exception as e:
         logging.exception(e)
+
+def river():
     #River
     try:
         kzoo_river = USGSWaterServices(site=settings.USGS_SITE)
@@ -78,6 +83,8 @@ while True:
             t = TimeSeriesMetric(k, v.get('value'), v.get('timestamp')).save()
     except Exception as e:
         logging.exception(e)
+
+def wunderground():
     #Wunderground
     try:
         wg = Wunderground(settings.WUNDERGROUND_API_KEY, settings.WUNDERGROUND_STATION_ID)
@@ -86,6 +93,16 @@ while True:
             t = TimeSeriesMetric(k, v).save()
     except Exception as e:
         logging.exception(e)
-    
 
-    gevent.sleep(10*60)#update data every 10 minutes
+
+#Register events
+schedule.every(6).hours.do(energy)
+schedule.every(10).minutes.do(nest)
+schedule.every(15).minutes.do(river)
+schedule.every(3).minutes.do(wunderground)
+
+while True:
+    schedule.run_pending()
+    gevent.sleep(60)
+
+
