@@ -117,7 +117,7 @@ def wunderground():
 #Register events
 schedule.every(6).hours.do(energy)
 schedule.every(10).minutes.do(nest)
-schedule.every(24).hours.do(nest_usage)
+schedule.every(12).hours.do(nest_usage)
 schedule.every(15).minutes.do(river)
 schedule.every(3).minutes.do(wunderground)
 
