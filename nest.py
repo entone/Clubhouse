@@ -1,11 +1,15 @@
 import os
+import json
 import requests
+import datetime
+import pytz
 
 class Nest(object):
 
     base_url = "https://home.nest.com"    
 
-    def __init__(self, username, password, serial=None, index=0, units="C"):
+    def __init__(self, username, password, serial=None, index=0, units="C", timezone=None):
+        self.local_timezone = timezone or pytz.timezone("US/Eastern")
         self.serial = serial
         self.units = units
         self.index = index
@@ -17,6 +21,8 @@ class Nest(object):
         self.status = None
         self.username = username
         self.password = password
+        self.version = None
+        self.timestamp = None
 
     def login(self):
         res = requests.post(
@@ -26,10 +32,13 @@ class Nest(object):
         )
 
         j = res.json()
-
         self.transport_url = j["urls"]["transport_url"]
         self.access_token = j["access_token"]
         self.userid = j["userid"]
+
+    def convert_date(self, naive):
+        local_dt = self.local_timezone.localize(naive)
+        return local_dt.astimezone(pytz.utc)
 
     def get_status(self):
         res = requests.get(
@@ -43,13 +52,48 @@ class Nest(object):
         )
 
         j = res.json()
-        self.structure_id = j["structure"].keys()[0]
+        self.structure_id = j["structure"].keys()[0]        
 
         if (self.serial is None):
             self.device_id = j["structure"][self.structure_id]["devices"][self.index]
             self.serial = self.device_id.split(".")[1]
+            self.version = j['device'][self.serial]['$version']
+            self.timestamp = j['device'][self.serial]['$timestamp']
 
         self.status = j
+
+    def get_usage(self):
+        print self.transport_url
+        res = requests.post(
+            "{}/v5/subscribe".format(self.transport_url),
+            headers={
+                "user-agent":"Nest/1.1.0.10 CFNetwork/548.0.4",
+                "Authorization":"Basic " + self.access_token,
+                "X-nl-protocol-version": "1",
+                "Content-Type":"application/json",
+                "X-nl-user-id": self.userid,
+                "X-nl-subscribe-timeout":60,
+                "X-Requested-With":"XMLHttpRequest"
+            },
+            data=json.dumps({'objects':[{'object_key':'energy_latest.02AA01AC201303YM'}]})
+        )
+        j = res.json()
+        days = {}
+        for day in j['objects'][0]['value']['days']:
+            day_start = datetime.datetime.strptime(day['day'], "%Y-%m-%d")
+            days[day['day']] = {'furnace':[], 'ac':[]}
+            for c in day['cycles']:
+                ts = self.convert_date(day_start+datetime.timedelta(seconds=int(c['start'])))
+                duration = int(c['duration'])
+                if c['type'] == 1:
+                    days[day['day']]['furnace'].append({'timestamp':ts, 'duration':float(duration)})
+                else:
+                    days[day['day']]['ac'].append({'timestamp':ts, 'duration':float(duration)})
+
+        return days
+
+
+
 
     def temp_in(self, temp):
         if (self.units == "F"):

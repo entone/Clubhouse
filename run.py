@@ -73,6 +73,25 @@ def nest():
     except Exception as e:
         logging.exception(e)
 
+def nest_usage():
+    #Nest Usage
+    print "woot"
+    try:
+        un = settings.NEST_USERNAME
+        pw = settings.NEST_PASSWORD
+        n = Nest(un, pw)
+        n.login()
+        n.get_status()
+        usage = n.get_usage()
+        for day in usage:          
+            for k, cycles in usage[day].iteritems():
+                for use in cycles:
+                    logging.info("{} ran at: {} for {}".format(k, use['timestamp'], use['duration']))
+                    it = TimeSeriesMetric('{}-usage'.format(k), use['duration'], use['timestamp']).save()
+    except Exception as e:
+        logging.exception(e)
+
+
 def river():
     #River
     try:
@@ -98,8 +117,11 @@ def wunderground():
 #Register events
 schedule.every(6).hours.do(energy)
 schedule.every(10).minutes.do(nest)
+schedule.every(24).hours.do(nest_usage)
 schedule.every(15).minutes.do(river)
 schedule.every(3).minutes.do(wunderground)
+
+nest_usage()
 
 while True:
     schedule.run_pending()
