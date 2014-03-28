@@ -202,7 +202,7 @@
           "type": "text",
           "loadingEditor": false,
           "mode": "html",
-          "content": "<img src=\"http://entropealabs.net/camera/front.jpg\" />",
+          "content": "<a href=\"http://airvision.entropealabs.net\" target=\"_blank\"><img src=\"http://entropealabs.net/camera/front.jpg\" /></a>",
           "style": {},
           "title": "Front Camera"
         }
