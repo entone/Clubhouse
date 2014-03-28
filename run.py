@@ -3,6 +3,7 @@ from energy import HamiltonEnergy
 from nest import Nest
 from river import USGSWaterServices
 from wunderground import Wunderground
+from airvision import AirVision
 import datetime
 from pprint import pprint
 import settings
@@ -113,6 +114,15 @@ def wunderground():
     except Exception as e:
         logging.exception(e)
 
+def airvision():
+    av = AirVision()
+    r = av.get_recordings()
+    for camera, recordings in r.iteritems():   
+        logging.info(camera)     
+        for rec in recordings:
+            logging.info("{}: {}".format(rec['length'],rec['timestamp']))
+            t = TimeSeriesMetric(camera, rec['length'], rec['timestamp']).save()
+
 
 #Register events
 schedule.every(6).hours.do(energy)
@@ -121,7 +131,9 @@ schedule.every(12).hours.do(nest_usage)
 schedule.every(15).minutes.do(river)
 schedule.every(3).minutes.do(wunderground)
 
-nest_usage()
+airvision()
+
+#nest_usage()
 
 while True:
     schedule.run_pending()

@@ -3,3 +3,4 @@ pytz
 elasticsearch
 gevent
 schedule
+pymongo

@@ -53,6 +53,27 @@
           "type": "lucene",
           "enable": true,
           "query": "_type:river-gage-height"
+        },
+        "5": {
+          "id": 5,
+          "type": "topN",
+          "query": "_type:furnace-usage",
+          "alias": "",
+          "color": "#890F02",
+          "pin": false,
+          "enable": true,
+          "field": "_type",
+          "size": 5,
+          "union": "AND"
+        },
+        "6": {
+          "id": 6,
+          "color": "#64B0C8",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:indoor-temperature"
         }
       },
       "ids": [
@@ -60,7 +81,9 @@
         1,
         2,
         3,
-        4
+        4,
+        5,
+        6
       ]
     },
     "filter": {
@@ -68,7 +91,7 @@
         "0": {
           "type": "time",
           "field": "timestamp",
-          "from": "now-24h",
+          "from": "now-7d",
           "to": "now",
           "mandate": "must",
           "active": true,
@@ -172,6 +195,89 @@
           "content": "<img src=\"http://entropealabs.net/camera/front.jpg\" />",
           "style": {},
           "title": "Front Camera"
+        }
+      ],
+      "notice": false
+    },
+    {
+      "title": "",
+      "height": "300",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 12,
+          "editable": true,
+          "type": "histogram",
+          "loadingEditor": false,
+          "mode": "total",
+          "time_field": "timestamp",
+          "value_field": "value",
+          "x-axis": true,
+          "y-axis": true,
+          "scale": 1,
+          "y_format": "none",
+          "grid": {
+            "max": null,
+            "min": 0
+          },
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              7
+            ]
+          },
+          "annotate": {
+            "enable": false,
+            "query": "*",
+            "size": 20,
+            "field": "_type",
+            "sort": [
+              "_score",
+              "desc"
+            ]
+          },
+          "auto_int": false,
+          "resolution": 100,
+          "interval": "1h",
+          "intervals": [
+            "auto",
+            "1s",
+            "1m",
+            "5m",
+            "10m",
+            "30m",
+            "1h",
+            "3h",
+            "12h",
+            "1d",
+            "1w",
+            "1y"
+          ],
+          "lines": false,
+          "fill": 0,
+          "linewidth": 3,
+          "points": false,
+          "pointradius": 5,
+          "bars": true,
+          "stack": true,
+          "spyable": true,
+          "zoomlinks": true,
+          "options": true,
+          "legend": true,
+          "show_query": true,
+          "interactive": true,
+          "legend_counts": true,
+          "timezone": "browser",
+          "percentage": false,
+          "zerofill": true,
+          "derivative": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": true
+          },
+          "title": "Train Activity"
         }
       ],
       "notice": false
@@ -360,6 +466,164 @@
       "notice": false
     },
     {
+      "title": "",
+      "height": "400",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 6,
+          "editable": true,
+          "type": "histogram",
+          "loadingEditor": false,
+          "mode": "total",
+          "time_field": "timestamp",
+          "value_field": "value",
+          "x-axis": true,
+          "y-axis": true,
+          "scale": 1,
+          "y_format": "none",
+          "grid": {
+            "max": null,
+            "min": 0
+          },
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              5,
+              6
+            ]
+          },
+          "annotate": {
+            "enable": false,
+            "query": "*",
+            "size": 20,
+            "field": "_type",
+            "sort": [
+              "_score",
+              "desc"
+            ]
+          },
+          "auto_int": true,
+          "resolution": 100,
+          "interval": "1h",
+          "intervals": [
+            "auto",
+            "1s",
+            "1m",
+            "5m",
+            "10m",
+            "30m",
+            "1h",
+            "3h",
+            "12h",
+            "1d",
+            "1w",
+            "1y"
+          ],
+          "lines": false,
+          "fill": 0,
+          "linewidth": 3,
+          "points": false,
+          "pointradius": 5,
+          "bars": true,
+          "stack": true,
+          "spyable": true,
+          "zoomlinks": true,
+          "options": true,
+          "legend": true,
+          "show_query": true,
+          "interactive": true,
+          "legend_counts": true,
+          "timezone": "browser",
+          "percentage": false,
+          "zerofill": true,
+          "derivative": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": true
+          },
+          "title": "HOURLY FURNACE USAGE (SECONDS)"
+        },
+        {
+          "span": 6,
+          "editable": true,
+          "type": "histogram",
+          "loadingEditor": false,
+          "mode": "total",
+          "time_field": "timestamp",
+          "value_field": "value",
+          "x-axis": true,
+          "y-axis": true,
+          "scale": 1,
+          "y_format": "none",
+          "grid": {
+            "max": null,
+            "min": 0
+          },
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              5,
+              6
+            ]
+          },
+          "annotate": {
+            "enable": false,
+            "query": "*",
+            "size": 20,
+            "field": "_type",
+            "sort": [
+              "_score",
+              "desc"
+            ]
+          },
+          "auto_int": false,
+          "resolution": 100,
+          "interval": "24h",
+          "intervals": [
+            "auto",
+            "1s",
+            "1m",
+            "5m",
+            "10m",
+            "30m",
+            "1h",
+            "3h",
+            "12h",
+            "1d",
+            "1w",
+            "1y"
+          ],
+          "lines": false,
+          "fill": 0,
+          "linewidth": 3,
+          "points": false,
+          "pointradius": 5,
+          "bars": true,
+          "stack": true,
+          "spyable": true,
+          "zoomlinks": true,
+          "options": true,
+          "legend": true,
+          "show_query": true,
+          "interactive": true,
+          "legend_counts": true,
+          "timezone": "browser",
+          "percentage": false,
+          "zerofill": true,
+          "derivative": false,
+          "tooltip": {
+            "value_type": "cumulative",
+            "query_as_alias": true
+          },
+          "title": "DAILY FURNACE USAGE (SECONDS)"
+        }
+      ],
+      "notice": false
+    },
+    {
       "title": "River Height",
       "height": "250",
       "editable": true,
@@ -513,21 +777,21 @@
   "pulldowns": [
     {
       "type": "query",
-      "collapse": true,
+      "collapse": false,
       "notice": false,
       "query": "*",
       "pinned": true,
       "history": [
+        "_type:clubhouse-front-camera",
+        "_type:indoor-temperature",
+        "_type:furnace-usage",
         "_type:river-gage-height",
         "*",
         "_type:river-* AND NOT _type:river-discharge* AND NOT _type:river-specific*",
         "_type:propane-level",
         "_type:*temp* OR _type:*humidity*",
-        "_type:river-* AND NOT _type:river-discharge*",
-        "_type:river-*",
-        "_type:river-gage-height OR _type:river-ph",
-        "_type:river-gage-height OR _type:river-pH",
-        "_type:river-guage-height"
+        "_type:furnace-usage OR _type:indoor-temperature",
+        "_type:river-* AND NOT _type:river-discharge*"
       ],
       "remember": 10,
       "enable": true
