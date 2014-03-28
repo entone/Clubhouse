@@ -130,10 +130,9 @@ schedule.every(10).minutes.do(nest)
 schedule.every(12).hours.do(nest_usage)
 schedule.every(15).minutes.do(river)
 schedule.every(3).minutes.do(wunderground)
+schedule.every(5).minutes.do(airvision)
 
 airvision()
-
-#nest_usage()
 
 while True:
     schedule.run_pending()

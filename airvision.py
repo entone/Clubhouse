@@ -1,5 +1,6 @@
 from pymongo import MongoReplicaSetClient, MongoClient
 import datetime
+import pytz
 
 def slugify(value):
     return value.replace(".", "-")
@@ -15,7 +16,7 @@ class AirVision(object):
         events = {}
         for d in self.db.recording.find():
             typ = events.setdefault(slugify(d['cameraName']), [])            
-            start = datetime.datetime.fromtimestamp(d['startTime'])
+            start = datetime.datetime.fromtimestamp(d['startTime'], tz=pytz.utc)
             typ.append({'length':float(d['length']), 'timestamp':start})
 
         return events
