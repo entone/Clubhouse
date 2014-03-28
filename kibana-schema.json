@@ -74,6 +74,15 @@
           "type": "lucene",
           "enable": true,
           "query": "_type:indoor-temperature"
+        },
+        "7": {
+          "id": 7,
+          "color": "#9AC48A",
+          "alias": "Train Activity",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:clubhouse-front-camera"
         }
       },
       "ids": [
@@ -83,7 +92,8 @@
         3,
         4,
         5,
-        6
+        6,
+        7
       ]
     },
     "filter": {
@@ -146,7 +156,7 @@
           },
           "auto_int": false,
           "resolution": 100,
-          "interval": "1h",
+          "interval": "3h",
           "intervals": [
             "auto",
             "1s",
@@ -423,7 +433,7 @@
           },
           "auto_int": false,
           "resolution": 100,
-          "interval": "1h",
+          "interval": "3h",
           "intervals": [
             "auto",
             "1s",
