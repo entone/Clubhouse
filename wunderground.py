@@ -23,7 +23,9 @@ class Wunderground(object):
                 try:
                     value = float(v)
                 except:
-                    value = float(v[0:-1])
+                    try:
+                        value = float(v[0:-1])
+                    except: value = 0
                 vals[slugify(k)] = value
 
         return vals

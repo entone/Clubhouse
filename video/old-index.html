@@ -1,0 +1,40 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Video Streaming tests</title>
+
+    <link href="video-js.css" rel="stylesheet">
+  
+    <!-- video.js -->
+    <script src="video.js"></script>
+
+    <!-- Media Sources plugin -->
+    <script src="videojs-media-sources.js"></script>
+
+      <!-- HLS plugin -->
+      <script src="src/videojs-hls.js"></script>
+
+      <!-- segment handling -->
+      <script src="src/flv-tag.js"></script>
+      <script src="src/exp-golomb.js"></script>
+      <script src="src/h264-stream.js"></script>
+      <script src="src/aac-stream.js"></script>
+      <script src="src/segment-parser.js"></script>
+
+      <!-- m3u8 handling -->
+      <script src="src/stream.js"></script>
+      <script src="src/m3u8/m3u8-parser.js"></script>
+      <script src="src/playlist-loader.js"></script>
+</head>
+<body>
+    <video id="video" class="video-js vjs-default-skin" width="100%" height="100%" controls>
+        <source src="http://airvision.entropealabs.net/hls/6221e89a-4bb2-3d95-8ee6-530419be2f4f/0/playlist.m3u8?apiKey=ypNcy9CMlccd66tz" type="application/x-mpegURL" />
+   </video>
+    <script>
+        videojs.options.flash.swf = "video-js.swf";
+        var player = videojs('video');
+        //player.play()//hls({url:"http://airvision.entropealabs.net/hls/6221e89a-4bb2-3d95-8ee6-530419be2f4f/0/playlist.m3u8?apiKey=ypNcy9CMlccd66tz", type:"application/vnd.apple.mpegurl"});
+    </script>
+    
+</body>
+</html>

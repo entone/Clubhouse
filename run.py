@@ -4,6 +4,8 @@ from nest import Nest
 from river import USGSWaterServices
 from wunderground import Wunderground
 from airvision import AirVision
+from pnut import PNUT
+from model import TimeSeriesMetric
 import datetime
 from pprint import pprint
 import settings
@@ -11,30 +13,9 @@ import md5
 import logging
 import gevent
 import schedule
+import os
 
 logging.basicConfig(level=logging.DEBUG)
-
-es = Elasticsearch()
-
-class TimeSeriesMetric(object):
-    _type = None
-    value = 0
-    timestamp = None
-
-    def __init__(self, type, value, timestamp=None):
-        self._type = type
-        self.value = value
-        self.timestamp = timestamp
-
-    def save(self):
-        doc = dict(
-            value=self.value,
-            timestamp=self.timestamp or datetime.datetime.utcnow()
-        )
-        id = md5.new("{}{}{}".format(self._type, self.value, str(doc['timestamp']))).hexdigest()
-        print id
-        res = es.index(index=settings.ES_INDEX, doc_type=self._type, id=id, body=doc)
-        print res
 
 
 
@@ -56,6 +37,17 @@ def energy():
         lp = he.last_payment()
         logging.info("Last Payment: ${} on {}".format(lp['amount'], lp['date']))
         lsp = TimeSeriesMetric('propane-last-payment', lp['amount'], lp['date']).save()
+    except Exception as e:
+        logging.exception(e)
+
+def run_pnut():
+    try:
+        n = PNUT()
+        status = n.get_status()
+        pprint(status)
+        for ups,vals in status.iteritems():
+            for k,v in vals.iteritems():
+                tm = TimeSeriesMetric(k, v).save()
     except Exception as e:
         logging.exception(e)
 
@@ -131,8 +123,15 @@ schedule.every(12).hours.do(nest_usage)
 schedule.every(15).minutes.do(river)
 schedule.every(3).minutes.do(wunderground)
 schedule.every(5).minutes.do(airvision)
+schedule.every(1).minute.do(run_pnut)
 
+energy()
+nest()
+nest_usage()
+river()
+wunderground()
 airvision()
+run_pnut()
 
 while True:
     schedule.run_pending()

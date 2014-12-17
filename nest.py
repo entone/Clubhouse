@@ -28,7 +28,8 @@ class Nest(object):
         res = requests.post(
             self.base_url+"/user/login",
             data={"username": self.username, "password": self.password},
-            headers={"user-agent":"Nest/1.1.0.10 CFNetwork/548.0.4"}
+            headers={"user-agent":"Nest/1.1.0.10 CFNetwork/548.0.4"},
+            timeout=10
         )
 
         j = res.json()
@@ -48,7 +49,8 @@ class Nest(object):
                 "Authorization":"Basic " + self.access_token,
                 "X-nl-user-id": self.userid,
                 "X-nl-protocol-version": "1"
-            }
+            },
+	    timeout=10
         )
 
         j = res.json()
@@ -75,7 +77,8 @@ class Nest(object):
                 "X-nl-subscribe-timeout":60,
                 "X-Requested-With":"XMLHttpRequest"
             },
-            data=json.dumps({'objects':[{'object_key':'energy_latest.02AA01AC201303YM'}]})
+            data=json.dumps({'objects':[{'object_key':'energy_latest.02AA01AC201303YM'}]}),
+	    timeout=10
         )
         j = res.json()
         days = {}

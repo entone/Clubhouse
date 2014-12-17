@@ -25,9 +25,8 @@ SENSORS = [
 
 while True:
     obj = {
-        '@timestamp':datetime.datetime.utcnow(),
-        '@message':random.randint(70, 100),
-        '@location':lat_lng()
+        'timestamp':datetime.datetime.utcnow(),
+        'value':random.randint(70, 100),
     }
     logging.info(obj)
     res = ES.index(index="clubhouse", doc_type=SENSORS[random.randint(0, len(SENSORS)-1)], body=obj)
