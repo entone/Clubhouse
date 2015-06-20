@@ -6,13 +6,13 @@ import re
 
 class HamiltonEnergy(object):
 
-    base_url = "https://www.chshamilton.com/"
+    base_url = "https://www.chshamilton.com"
     target = "C012$btnlogin"
     username = None
     password = None
     level = 0
     last_fill = None
-    level_pattern = "drawChart\((\d+)\)"
+    level_pattern = "drawChart\((\d+\.\d+)\)"
     last_gallons_pattern = "Last delivery\: (\d+) gallons on (.+)"
     last_price_pattern = "Current Price\: \$(\d+\.\d+)"
     last_payment_amount_pattern = "Last Payment Amount:</div><div class=\"de\">\$(\d+\.\d+)</div>"
@@ -34,10 +34,11 @@ class HamiltonEnergy(object):
                 'C012$txtusername':self.username,
                 'C012$txtpassword':self.password,
                 '__EVENTTARGET':self.target,
-                '__EVENTVALIDATION':'/wEdAAiaoFgXKUYZGhlX5g1xqabYHoM9t7hqPaUQE97abnwoi6CZa5hTyH84HHe34Te4p4/RAtsBqO8WzwzLHXCMch8ggNjXp5guGoNW5VAytZOxoeUI7sGl1euM09DHmP1FIIxQ4DHenw3+Ng5DiOdrAzrfxGZVd7rh3RUlaUuxePQahzZJCyHqjy/e7mWJNTUtLV4wVzFL9iczLWSx85ceg7T7',
-                '__VIEWSTATE':'/wEPDwUKLTI2Nzg4ODc5OGQYBAUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgMFI0MwMTAkY3RsMDAkY3RsMDAkY3RsMDAkbGlzdHNDb250cm9sBTpDMDEwJGN0bDAwJGN0bDAwJGN0bDAwJGxpc3RzQ29udHJvbCRjdHJsMCRsaXN0SXRlbXNDb250cm9sBSpDMDExJG5ld3NGcm9udGVuZExpc3QkY3RsMDAkY3RsMDAkTmV3c0xpc3QFKkMwMTEkbmV3c0Zyb250ZW5kTGlzdCRjdGwwMCRjdGwwMCROZXdzTGlzdA8UKwAFZBQrAAMPBQZfIURTSUMCBA8FC18hSXRlbUNvdW50AgQPBQhfIVBDb3VudGRkFgIeAl9jZmRkBTpDMDEwJGN0bDAwJGN0bDAwJGN0bDAwJGxpc3RzQ29udHJvbCRjdHJsMCRsaXN0SXRlbXNDb250cm9sDxQrAAVkFCsAAw8FBl8hRFNJQwIGDwULXyFJdGVtQ291bnQCBg8FCF8hUENvdW50ZGQWAh8AZmRkBSNDMDEwJGN0bDAwJGN0bDAwJGN0bDAwJGxpc3RzQ29udHJvbA8UKwAFZBQrAAMPBQZfIURTSUMCAQ8FC18hSXRlbUNvdW50AgEPBQhfIVBDb3VudGRkFgIfAGZkZDlJczdoTfQkoJAABReuwi741uLK13f+PyV+yBYqbDYQ'
+                '__EVENTVALIDATION':'/wEdAAixajrIZlNj001ZCV+m6lQKHoM9t7hqPaUQE97abnwoi6CZa5hTyH84HHe34Te4p4/RAtsBqO8WzwzLHXCMch8ggNjXp5guGoNW5VAytZOxoeUI7sGl1euM09DHmP1FIIxQ4DHenw3+Ng5DiOdrAzrfxGZVd7rh3RUlaUuxePQah0HjPsBU9+iPDQaGk5eeUZ6PTtQBqddYrkidh9I1Nzyq',
+                '__VIEWSTATE':'/wEPDwUJNzA1OTYwNjQ3ZBgEBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WAgUjQzAyOSRjdGwwMCRjdGwwMCRjdGwwMCRsaXN0c0NvbnRyb2wFOkMwMjkkY3RsMDAkY3RsMDAkY3RsMDAkbGlzdHNDb250cm9sJGN0cmwwJGxpc3RJdGVtc0NvbnRyb2wFKkMwMzYkbmV3c0Zyb250ZW5kTGlzdCRjdGwwMCRjdGwwMCROZXdzTGlzdA8UKwAFZBQrAABkFgIeAl9jZmRkBTpDMDI5JGN0bDAwJGN0bDAwJGN0bDAwJGxpc3RzQ29udHJvbCRjdHJsMCRsaXN0SXRlbXNDb250cm9sDxQrAAVkFCsAAw8FBl8hRFNJQwIGDwULXyFJdGVtQ291bnQCBg8FCF8hUENvdW50ZGQWAh8AZmRkBSNDMDI5JGN0bDAwJGN0bDAwJGN0bDAwJGxpc3RzQ29udHJvbA8UKwAFZBQrAAMPBQZfIURTSUMCAQ8FC18hSXRlbUNvdW50AgEPBQhfIVBDb3VudGRkFgIfAGZkZCGtKlCgg6cYXVksNb4WfIbnVjOpq9gUguhQeM38po7T',
             }, verify=False)
             self.content = res.content
+            print self.content
         return self.content
 
     def convert_date(self, naive):
