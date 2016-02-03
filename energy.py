@@ -17,6 +17,8 @@ class HamiltonEnergy(object):
     last_price_pattern = "Current Price\: \$(\d+\.\d+)"
     last_payment_amount_pattern = "Last Payment Amount:</div><div class=\"de\">\$(\d+\.\d+)</div>"
     last_payment_date_pattern = "Last Payment Date:</div><div class=\"de\">(\d+/\d+/\d+)</div>"
+    event_validation_pattern = "id=\"__EVENTVALIDATION\" value=\"(.+?)\""
+    viewstate_pattern = "id=\"__VIEWSTATE\" value=\"(.+?)\""
     local_timezone = None
 
 
@@ -27,15 +29,26 @@ class HamiltonEnergy(object):
         self.password = password
         self.local_timezone = timezone or pytz.timezone("US/Eastern")
 
+    def get_state(self):
+        res = requests.get(self.base_url)
+        content = res.content
+        e = re.search(self.event_validation_pattern, content)
+        v = re.search(self.viewstate_pattern, content)
+        event = e.group(1)
+        viewstate = v.group(1)
+        return (event, viewstate)
+
+
     def get_data(self, refresh=False, test=False):
         if test: return open("./data_test.html").read()
         if not self.content or refresh:
+            event, viewstate = self.get_state()
             res = requests.post(self.base_url, data={
                 'C012$txtusername':self.username,
                 'C012$txtpassword':self.password,
                 '__EVENTTARGET':self.target,
-                '__EVENTVALIDATION':'/wEdAAixajrIZlNj001ZCV+m6lQKHoM9t7hqPaUQE97abnwoi6CZa5hTyH84HHe34Te4p4/RAtsBqO8WzwzLHXCMch8ggNjXp5guGoNW5VAytZOxoeUI7sGl1euM09DHmP1FIIxQ4DHenw3+Ng5DiOdrAzrfxGZVd7rh3RUlaUuxePQah0HjPsBU9+iPDQaGk5eeUZ6PTtQBqddYrkidh9I1Nzyq',
-                '__VIEWSTATE':'/wEPDwUJNzA1OTYwNjQ3ZBgEBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WAgUjQzAyOSRjdGwwMCRjdGwwMCRjdGwwMCRsaXN0c0NvbnRyb2wFOkMwMjkkY3RsMDAkY3RsMDAkY3RsMDAkbGlzdHNDb250cm9sJGN0cmwwJGxpc3RJdGVtc0NvbnRyb2wFKkMwMzYkbmV3c0Zyb250ZW5kTGlzdCRjdGwwMCRjdGwwMCROZXdzTGlzdA8UKwAFZBQrAABkFgIeAl9jZmRkBTpDMDI5JGN0bDAwJGN0bDAwJGN0bDAwJGxpc3RzQ29udHJvbCRjdHJsMCRsaXN0SXRlbXNDb250cm9sDxQrAAVkFCsAAw8FBl8hRFNJQwIGDwULXyFJdGVtQ291bnQCBg8FCF8hUENvdW50ZGQWAh8AZmRkBSNDMDI5JGN0bDAwJGN0bDAwJGN0bDAwJGxpc3RzQ29udHJvbA8UKwAFZBQrAAMPBQZfIURTSUMCAQ8FC18hSXRlbUNvdW50AgEPBQhfIVBDb3VudGRkFgIfAGZkZCGtKlCgg6cYXVksNb4WfIbnVjOpq9gUguhQeM38po7T',
+                '__EVENTVALIDATION':event,
+                '__VIEWSTATE':viewstate
             }, verify=False)
             self.content = res.content
             print self.content
