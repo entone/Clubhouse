@@ -49,7 +49,7 @@ class HamiltonEnergy(object):
                 '__EVENTTARGET':self.target,
                 '__EVENTVALIDATION':event,
                 '__VIEWSTATE':viewstate
-            }, verify=False)
+            }, verify=False, timeout=10)
             self.content = res.content
             print self.content
         return self.content

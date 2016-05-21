@@ -7,7 +7,7 @@ def slugify(value):
     return "river-{}".format(value.split(",")[0].lower().replace(" ", "-"))
 
 class USGSWaterServices(object):
-    
+
     site = "04108660"
     format = "json"
     base_url = "http://waterservices.usgs.gov/nwis/iv/"
@@ -23,7 +23,7 @@ class USGSWaterServices(object):
 
     def get_data(self, refresh=False):
         if not self.content or refresh:
-            res = requests.get("{}?format={}&site={}".format(self.base_url, self.format, self.site))
+            res = requests.get("{}?format={}&site={}".format(self.base_url, self.format, self.site), timeout=10)
             self.content = res.json()
 
         return self.content
@@ -55,13 +55,13 @@ class USGSWaterServices(object):
             print v.get("variable", {}).get("variableDescription")
             abbrv = v.get("variable", {}).get("unit", {}).get("unitAbbreviation")
             for i in v.get("values"):
-                for vi in i.get("value"):                    
+                for vi in i.get("value"):
                     print "{}{}".format(vi.get("value"), abbrv)
                     pos = vi.get("dateTime").rfind(':')
                     ts = vi.get("dateTime").split(".")[0]
                     print "Timestamp: {}".format(datetime.datetime.strptime(ts, self.date_format))
                     values[slugify(v.get("variable", {}).get("variableDescription"))] = {
-                        'value':float(vi.get("value")), 
+                        'value':float(vi.get("value")),
                         'timestamp':self.convert_date(datetime.datetime.strptime(ts, self.date_format))
                     }
 

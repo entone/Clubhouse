@@ -6,7 +6,7 @@ import pytz
 
 class Nest(object):
 
-    base_url = "https://home.nest.com"    
+    base_url = "https://home.nest.com"
 
     def __init__(self, username, password, serial=None, index=0, units="C", timezone=None):
         self.local_timezone = timezone or pytz.timezone("US/Eastern")
@@ -50,11 +50,11 @@ class Nest(object):
                 "X-nl-user-id": self.userid,
                 "X-nl-protocol-version": "1"
             },
-	    timeout=10
+	        timeout=10
         )
 
         j = res.json()
-        self.structure_id = j["structure"].keys()[0]        
+        self.structure_id = j["structure"].keys()[0]
 
         if (self.serial is None):
             self.device_id = j["structure"][self.structure_id]["devices"][self.index]
